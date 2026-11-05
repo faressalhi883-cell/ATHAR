@@ -1,0 +1,791 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" media="(prefers-color-scheme: light)" content="#17634c">
+<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0f1714">
+<meta name="application-name" content="أثر">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="أثر">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icon-192.png" type="image/png">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="icon-180.png">
+<title>أثر | دفتر الأدلة الميدانية</title>
+<style>
+:root{
+  --bg:#f4f6f2;--card:#fff;--ink:#18231f;--muted:#5f6f66;--line:#dce5de;
+  --brand:#17634c;--brand-ink:#fff;--brand2:#e5f2eb;--warn:#fff4d9;--warn-line:#f0dfad;
+  --danger:#a52d2d;--danger-bg:#fff0f0;--danger-line:#f0cccc;--shadow:0 5px 20px rgba(20,50,35,.07);
+  --radius:16px;--safe-top:env(safe-area-inset-top,0px);--safe-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme:dark){
+  :root{
+    --bg:#0f1714;--card:#18231f;--ink:#e6efe9;--muted:#9fb3a7;--line:#2a3a33;
+    --brand:#4fb88e;--brand-ink:#0b1410;--brand2:#22332c;--warn:#3a3218;--warn-line:#5b4d22;
+    --danger:#ff8c8c;--danger-bg:#3a1f1f;--danger-line:#5a2c2c;--shadow:none;
+  }
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,"Segoe UI",Tahoma,Arial,sans-serif;line-height:1.6;padding-bottom:var(--safe-bottom)}
+header{background:linear-gradient(135deg,#123c31,#216b50);color:#fff;padding:calc(24px + var(--safe-top)) 16px 28px}
+header .wrap,main{max-width:900px;margin:auto}
+header h1{margin:0;font-size:1.9rem;letter-spacing:.3px}
+header p{margin:4px 0 0;color:#d8eee2}
+.tag{display:inline-block;margin-top:10px;padding:3px 10px;border:1px solid #ffffff66;border-radius:99px;font-size:.8rem}
+main{padding:16px}
+.notice{background:var(--warn);border:1px solid var(--warn-line);border-radius:14px;padding:12px 14px;margin:0 0 16px;font-size:.92rem}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:17px;margin:0 0 16px;box-shadow:var(--shadow)}
+h2{font-size:1.15rem;margin:0 0 12px}
+h3{font-size:1.02rem;margin:0 0 4px}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.field{display:flex;flex-direction:column;gap:5px;min-width:0}
+.field.full{grid-column:1/-1}
+label{font-weight:650;font-size:.9rem}
+input,textarea,select{font:inherit;color:var(--ink);background:var(--card);border:1px solid #bccabf;border-radius:10px;padding:10px 11px;width:100%;min-width:0}
+textarea{min-height:80px;resize:vertical}
+input:focus,textarea:focus,select:focus{outline:2px solid #8bc4a8;border-color:var(--brand)}
+.hint{font-size:.79rem;color:var(--muted)}
+.error{color:var(--danger);font-size:.82rem;min-height:1em}
+.actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:14px}
+button{font:inherit;font-weight:700;border:0;border-radius:11px;padding:10px 15px;cursor:pointer;background:var(--brand);color:var(--brand-ink);min-height:42px}
+button.secondary{background:var(--brand2);color:var(--brand)}
+button.danger{background:var(--danger-bg);color:var(--danger);border:1px solid var(--danger-line)}
+button.small{padding:6px 10px;font-size:.82rem;min-height:34px}
+button:focus-visible{outline:3px solid #a8cdb7;outline-offset:2px}
+[hidden]{display:none!important}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-bottom:14px}
+.stat{background:var(--brand2);border:1px solid var(--line);border-radius:12px;padding:10px;text-align:center}
+.stat strong{display:block;font-size:1.3rem}
+.stat span{font-size:.78rem;color:var(--muted)}
+.records{display:grid;gap:10px}
+.record{border:1px solid var(--line);border-radius:14px;padding:13px;background:var(--card);transition:box-shadow .3s}
+.record.flash{box-shadow:0 0 0 3px #8bc4a8}
+.meta{font-size:.8rem;color:var(--muted)}
+.result{background:var(--brand2);padding:8px 10px;border-radius:9px;margin:9px 0;font-size:.9rem}
+.record p{white-space:pre-wrap;margin:6px 0;overflow-wrap:anywhere}
+.empty{color:var(--muted);text-align:center;padding:24px 8px}
+.foot{font-size:.8rem;color:var(--muted);text-align:center;padding:8px 0 24px}
+.toast{position:fixed;bottom:calc(16px + var(--safe-bottom));left:50%;transform:translateX(-50%);background:#18231f;color:#fff;padding:10px 16px;border-radius:12px;font-size:.9rem;max-width:90vw;z-index:50;box-shadow:var(--shadow)}
+dialog:not([open]){display:none}
+dialog[open]{display:block}
+dialog{background:var(--card);color:var(--ink);border:1px solid var(--line);border-radius:var(--radius);padding:20px;max-width:min(92vw,480px);box-shadow:var(--shadow)}
+dialog::backdrop{background:rgba(0,0,0,.4)}
+dialog h2{margin:0 0 10px}
+dialog p{margin:0 0 14px;white-space:pre-line;line-height:1.8}
+dialog .choices{display:flex;gap:9px;flex-wrap:wrap;justify-content:flex-start}
+@media (max-width:620px){
+  .grid{grid-template-columns:1fr}
+  .field.full{grid-column:auto}
+  .stats{grid-template-columns:repeat(3,1fr)}
+  header h1{font-size:1.6rem}
+  .panel{padding:14px}
+}
+</style>
+</head>
+<body>
+<header>
+  <div class="wrap">
+    <h1>أثر | ATHAR</h1>
+    <p>دفتر مفتوح لتوثيق الملاحظات والتجارب الميدانية</p>
+    <span class="tag">الإصدار 1.0 · يعمل دون إنترنت بعد التثبيت</span>
+  </div>
+</header>
+
+<main>
+  <div class="notice">
+    <strong>تنبيه علمي وسلامة:</strong> هذا الدفتر يوثق ما حدث، ولا يثبت أن ممارسة ما سببت النتيجة.
+    لا تستخدمه لتجربة مواد مجهولة أو مبيدات أو خلطات كيميائية أو أعلاف غير آمنة.
+    لا تسجل أسماء أشخاص أو عناوين دقيقة.
+  </div>
+
+  <section class="panel" id="formPanel">
+    <h2 id="formHeading">إضافة سجل ميداني</h2>
+    <form id="entryForm" novalidate>
+      <div class="grid">
+        <div class="field full">
+          <label for="title">عنوان السجل *</label>
+          <input id="title" required maxlength="90" placeholder="مثال: مقارنة طريقتين للري">
+          <span class="error" data-err="title"></span>
+        </div>
+        <div class="field">
+          <label for="topic">المجال</label>
+          <select id="topic">
+            <option>المحاصيل</option><option>التربة</option><option>المياه والري</option>
+            <option>الأشجار</option><option>المراعي</option><option>ملاحظة بيئية</option><option>أخرى</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="status">حالة المراجعة</label>
+          <select id="status">
+            <option>مسوّدة</option><option>مُراجَع</option><option>يحتاج تكراراً</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="country">البلد</label>
+          <input id="country" value="الجزائر" maxlength="60">
+        </div>
+        <div class="field">
+          <label for="region">المنطقة العامة</label>
+          <input id="region" maxlength="60" placeholder="مثال: سطيف، دون عنوان دقيق">
+        </div>
+        <div class="field">
+          <label for="date">تاريخ التسجيل</label>
+          <input id="date" type="date">
+          <span class="error" data-err="date"></span>
+        </div>
+        <div class="field">
+          <label for="reps">عدد التكرارات المستقلة</label>
+          <input id="reps" type="number" min="1" max="10000" step="1" inputmode="numeric" placeholder="اتركه فارغاً إن لم تعرف">
+          <span class="hint">عدد صحيح موجب.</span>
+          <span class="error" data-err="reps"></span>
+        </div>
+        <div class="field full">
+          <label for="question">ما السؤال الذي تحاول فهمه؟</label>
+          <textarea id="question" maxlength="600" placeholder="اكتب السؤال، لا النتيجة التي تتمنى الوصول إليها."></textarea>
+        </div>
+        <div class="field full">
+          <label for="method">ما الذي تمت ملاحظته أو تطبيقه؟</label>
+          <textarea id="method" maxlength="1000" placeholder="صف ما حدث بدقة، دون إضافة معلومات غير مؤكدة."></textarea>
+        </div>
+        <div class="field full">
+          <label for="comparison">بماذا قورنت النتيجة؟</label>
+          <textarea id="comparison" maxlength="700" placeholder="مثال: قطعة أخرى لم تتغير فيها طريقة الري، أو اكتب: لا توجد مجموعة مقارنة."></textarea>
+        </div>
+        <div class="field">
+          <label for="measure">المقياس</label>
+          <input id="measure" maxlength="60" placeholder="مثال: كمية الماء">
+        </div>
+        <div class="field">
+          <label for="unit">الوحدة</label>
+          <input id="unit" maxlength="25" placeholder="مثال: لتر">
+        </div>
+        <div class="field">
+          <label for="valueA">قيمة الحالة A</label>
+          <input id="valueA" type="number" step="any" inputmode="decimal" placeholder="رقم فقط">
+          <span class="error" data-err="valueA"></span>
+        </div>
+        <div class="field">
+          <label for="valueB">قيمة الحالة B / المقارنة</label>
+          <input id="valueB" type="number" step="any" inputmode="decimal" placeholder="رقم فقط">
+          <span class="error" data-err="valueB"></span>
+        </div>
+        <div class="field full">
+          <label for="conditions">الظروف المحيطة</label>
+          <textarea id="conditions" maxlength="800" placeholder="نوع التربة، الطقس، الفترة، الصنف، أو أي ظروف مؤثرة معروفة."></textarea>
+        </div>
+        <div class="field full">
+          <label for="limits">ما الذي لا نعرفه أو قد يؤثر في النتيجة؟</label>
+          <textarea id="limits" maxlength="800" placeholder="مثال: اختلاف الظل، قلة القياسات، أو عدم تكرار المقارنة."></textarea>
+        </div>
+      </div>
+      <div class="actions">
+        <button id="submitBtn" type="submit">حفظ السجل على هذا الجهاز</button>
+        <button class="secondary" id="cancelEdit" type="button" hidden>إلغاء التعديل</button>
+        <button class="secondary" id="resetBtn" type="button">مسح الحقول</button>
+      </div>
+      <p class="hint">الحقول ذات النجمة إلزامية فقط. تبقى السجلات في متصفح هذا الجهاز ولا تُرسل إلى أي خادم.</p>
+    </form>
+  </section>
+
+  <section class="panel">
+    <h2>سجلاتي</h2>
+    <div class="stats">
+      <div class="stat"><strong id="count">0</strong><span>سجل محفوظ</span></div>
+      <div class="stat"><strong id="measured">0</strong><span>سجل فيه قياسان</span></div>
+      <div class="stat"><strong id="regions">0</strong><span>منطقة مسجلة</span></div>
+    </div>
+    <div class="field" style="margin-bottom:12px">
+      <label for="search">بحث في السجلات</label>
+      <input id="search" type="search" placeholder="ابحث بالعنوان أو المجال أو المنطقة أو النص">
+      <span class="hint" id="searchCount" aria-live="polite"></span>
+    </div>
+    <div class="actions" style="margin:0 0 12px">
+      <button class="secondary" id="exportJson" type="button">تصدير نسخة JSON</button>
+      <button class="secondary" id="importBtn" type="button">استرجاع نسخة JSON</button>
+      <input id="importFile" type="file" accept="application/json,.json" hidden>
+      <button class="secondary" id="exportCsv" type="button">تصدير CSV</button>
+      <button class="secondary" id="exportMd" type="button">تصدير Markdown</button>
+      <button class="danger" id="deleteAll" type="button">حذف كل السجلات</button>
+    </div>
+    <div id="records" class="records"></div>
+  </section>
+
+  <div class="actions" style="justify-content:center;flex-direction:column;align-items:center">
+    <button class="secondary" id="installBtn" type="button" hidden>تثبيت التطبيق على الجهاز</button>
+    <p class="hint" id="iosHint" hidden>على آيفون: اضغط زر المشاركة في Safari ثم اختر «إضافة إلى الشاشة الرئيسية».</p>
+  </div>
+  <p class="foot">أثر 1.0 — احتفظ بنسخة تصدير احتياطية بانتظام؛ حذف بيانات المتصفح أو تغيير الجهاز قد يفقدك السجلات.</p>
+</main>
+
+<dialog id="importDialog" aria-labelledby="importTitle" aria-describedby="importMsg">
+  <h2 id="importTitle">استرجاع سجلات</h2>
+  <p id="importMsg"></p>
+  <form method="dialog" class="choices">
+    <button type="submit" value="merge" id="importMerge">دمج الجديد فقط</button>
+    <button type="submit" value="replace" id="importReplace" class="danger">استبدال كامل</button>
+    <button type="submit" value="cancel" class="secondary">إلغاء</button>
+  </form>
+</dialog>
+
+<div id="toast" class="toast" role="status" aria-atomic="true" hidden></div>
+
+<script>
+(() => {
+  "use strict";
+
+  const APP_VERSION = "1.0";
+  const KEY = "athar_records";
+  const LEGACY_KEYS = ["athar_records_v04", "athar_records_v03", "athar_records_v02", "athar_records_v01"];
+  const STATUSES = ["مسوّدة", "مُراجَع", "يحتاج تكراراً"];
+  const TOPICS = ["المحاصيل", "التربة", "المياه والري", "الأشجار", "المراعي", "ملاحظة بيئية", "أخرى"];
+  const LIMITS = { title: 90, country: 60, region: 60, measure: 60, unit: 25, question: 600, method: 1000, comparison: 700, conditions: 800, limits: 800 };
+  const TEXT_FIELDS = ["title","topic","country","region","date","status","question","method","comparison","measure","unit","conditions","limits"];
+  const SEARCH_FIELDS = ["title","topic","country","region","question","method","comparison","conditions","limits","measure","unit"];
+  const NUM_FMT = "ar-DZ-u-nu-latn";
+  const INVISIBLE = /[\u200e\u200f\u202a-\u202e\u2066-\u2069]/g;
+  const MAX_IMPORT_BYTES = 5_000_000;
+  const MAX_ID_ATTEMPTS = 1000;
+
+  const $ = id => document.getElementById(id);
+  const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+
+  function makeId() {
+    return crypto.randomUUID ? crypto.randomUUID() : Date.now().toString(36) + Math.random().toString(36).slice(2);
+  }
+
+  const nowIso = () => new Date().toISOString();
+  const todayStr = () => {
+    const d = new Date();
+    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+  };
+  const isRealDate = s => {
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(s)) return false;
+    const d = new Date(s + "T00:00:00Z");
+    return !isNaN(d) && d.toISOString().slice(0, 10) === s;
+  };
+  const toNumOrNull = v => {
+    if (v === "" || v === null || v === undefined || typeof v === "boolean") return null;
+    const n = Number(v);
+    return Number.isFinite(n) ? n : null;
+  };
+  const clip = (v, n) => String(v ?? "").normalize("NFC").replace(INVISIBLE, "").trim().slice(0, n);
+
+  const fmt = n => (n === null || n === undefined ? "—" : Number(n).toLocaleString(NUM_FMT, { maximumFractionDigits: 2 }));
+  const fmtPct = v => {
+    if (v === null) return "غير قابل للحساب (القيمة المرجعية = 0)";
+    let r = Number(v.toFixed(2));
+    if (r === 0) r = 0;
+    return (r > 0 ? "+" : "") + fmt(r) + "%";
+  };
+
+  const toast = msg => {
+    const t = $("toast");
+    t.textContent = msg;
+    t.hidden = false;
+    clearTimeout(toast._t);
+    toast._t = setTimeout(() => (t.hidden = true), 3200);
+  };
+
+  function normalize(x) {
+    x = x && typeof x === "object" && !Array.isArray(x) ? x : {};
+    const reps = x.reps;
+    const created = String(x.createdAt ?? nowIso());
+    const date = String(x.date ?? "");
+    return {
+      id: clip(x.id, 100) || makeId(),
+      createdAt: created,
+      updatedAt: String(x.updatedAt ?? created),
+      title: clip(x.title, LIMITS.title),
+      topic: TOPICS.includes(x.topic) ? x.topic : "أخرى",
+      country: clip(x.country, LIMITS.country),
+      region: clip(x.region, LIMITS.region),
+      date: isRealDate(date) ? date : "",
+      reps: typeof reps === "number" && Number.isInteger(reps) && reps >= 1 ? reps : null,
+      question: clip(x.question, LIMITS.question),
+      method: clip(x.method, LIMITS.method),
+      comparison: clip(x.comparison, LIMITS.comparison),
+      measure: clip(x.measure, LIMITS.measure),
+      unit: clip(x.unit, LIMITS.unit),
+      valueA: toNumOrNull(x.valueA),
+      valueB: toNumOrNull(x.valueB),
+      conditions: clip(x.conditions, LIMITS.conditions),
+      limits: clip(x.limits, LIMITS.limits),
+      status: STATUSES.includes(x.status) ? x.status : "مسوّدة"
+    };
+  }
+
+  function changes(a, b) {
+    if (a === null || b === null) return null;
+    return {
+      aVsB: b !== 0 ? ((a - b) / Math.abs(b)) * 100 : null,
+      bVsA: a !== 0 ? ((b - a) / Math.abs(a)) * 100 : null
+    };
+  }
+
+  let records = [];
+  let editingId = null;
+  let lastSavedId = null;
+
+  const readKey = k => {
+    try {
+      const v = JSON.parse(localStorage.getItem(k) || "null");
+      return Array.isArray(v) ? v : null;
+    } catch {
+      return null;
+    }
+  };
+
+  function loadRecords() {
+    let data = readKey(KEY);
+    let fromLegacy = null;
+    if (!data) {
+      for (const k of LEGACY_KEYS) {
+        data = readKey(k);
+        if (data) { fromLegacy = k; break; }
+      }
+    }
+    records = (data || []).filter(x => x && typeof x === "object").map(normalize);
+    if (fromLegacy && records.length && persist()) {
+      localStorage.removeItem(fromLegacy);
+    }
+  }
+
+  function persist() {
+    try {
+      localStorage.setItem(KEY, JSON.stringify(records));
+      return true;
+    } catch {
+      alert("تعذر الحفظ. قد تكون مساحة التخزين في المتصفح ممتلئة. صدّر سجلاتك ثم احذف بعض البيانات.");
+      return false;
+    }
+  }
+
+  function readForm() {
+    const repsText = $("reps").value.trim();
+    return {
+      title: $("title").value.trim(),
+      topic: $("topic").value,
+      status: $("status").value,
+      country: $("country").value.trim(),
+      region: $("region").value.trim(),
+      date: $("date").value,
+      reps: repsText === "" ? null : Number(repsText),
+      question: $("question").value.trim(),
+      method: $("method").value.trim(),
+      comparison: $("comparison").value.trim(),
+      measure: $("measure").value.trim(),
+      unit: $("unit").value.trim(),
+      valueA: toNumOrNull($("valueA").value),
+      valueB: toNumOrNull($("valueB").value),
+      conditions: $("conditions").value.trim(),
+      limits: $("limits").value.trim()
+    };
+  }
+
+  function validate(d) {
+    const errs = {};
+    if (!d.title) errs.title = "عنوان السجل مطلوب.";
+    if ($("date").value && !isRealDate($("date").value)) errs.date = "التاريخ غير صالح.";
+    if ($("reps").value.trim() !== "" && (!Number.isInteger(d.reps) || d.reps < 1)) errs.reps = "أدخل عدداً صحيحاً موجباً أو اترك الحقل فارغاً.";
+    if ($("valueA").value.trim() !== "" && d.valueA === null) errs.valueA = "أدخل رقماً صالحاً.";
+    if ($("valueB").value.trim() !== "" && d.valueB === null) errs.valueB = "أدخل رقماً صالحاً.";
+    document.querySelectorAll("[data-err]").forEach(el => (el.textContent = errs[el.dataset.err] || ""));
+    return Object.keys(errs).length === 0;
+  }
+
+  function fillForm(x) {
+    $("title").value = x.title;
+    $("topic").value = x.topic;
+    $("status").value = x.status;
+    $("country").value = x.country;
+    $("region").value = x.region;
+    $("date").value = x.date;
+    $("reps").value = x.reps ?? "";
+    $("question").value = x.question;
+    $("method").value = x.method;
+    $("comparison").value = x.comparison;
+    $("measure").value = x.measure;
+    $("unit").value = x.unit;
+    $("valueA").value = x.valueA ?? "";
+    $("valueB").value = x.valueB ?? "";
+    $("conditions").value = x.conditions;
+    $("limits").value = x.limits;
+  }
+
+  function setAddMode() {
+    editingId = null;
+    $("formHeading").textContent = "إضافة سجل ميداني";
+    $("submitBtn").textContent = "حفظ السجل على هذا الجهاز";
+    $("cancelEdit").hidden = true;
+  }
+
+  function resetForm() {
+    $("entryForm").reset();
+    $("country").value = "الجزائر";
+    $("date").value = todayStr();
+    document.querySelectorAll("[data-err]").forEach(el => (el.textContent = ""));
+    setAddMode();
+  }
+
+  $("entryForm").addEventListener("submit", e => {
+    e.preventDefault();
+    const d = readForm();
+    if (!validate(d)) {
+      const firstErr = document.querySelector("[data-err]:not(:empty)");
+      if (firstErr) document.getElementById(firstErr.dataset.err)?.focus();
+      return;
+    }
+    const existing = editingId ? records.find(r => r.id === editingId) : null;
+    const now = nowIso();
+    const item = normalize({
+      ...(existing || {}),
+      ...d,
+      id: existing ? existing.id : makeId(),
+      createdAt: existing ? existing.createdAt : now,
+      updatedAt: now
+    });
+    const backup = records.slice();
+    if (existing) records = records.map(r => (r.id === existing.id ? item : r));
+    else records.unshift(item);
+    if (persist()) {
+      lastSavedId = item.id;
+      resetForm();
+      render();
+      toast(existing ? "تم حفظ التعديلات." : "تم حفظ السجل.");
+    } else {
+      records = backup;
+    }
+  });
+
+  $("resetBtn").addEventListener("click", resetForm);
+  $("cancelEdit").addEventListener("click", resetForm);
+
+  function resultHtml(x) {
+    const c = changes(x.valueA, x.valueB);
+    if (!c) return `<div class="result">لم تُدخل قيمتين قابلتين للمقارنة.</div>`;
+    const u = x.unit ? " " + esc(x.unit) : "";
+    return `<div class="result">
+      A: ${fmt(x.valueA)}${u} · B: ${fmt(x.valueB)}${u}<br>
+      تغير A بالنسبة إلى B: <strong>${fmtPct(c.aVsB)}</strong><br>
+      تغير B بالنسبة إلى A: <strong>${fmtPct(c.bVsA)}</strong>
+    </div>`;
+  }
+
+  function recordHtml(x) {
+    const parts = [
+      x.question && `<p><strong>السؤال:</strong> ${esc(x.question)}</p>`,
+      x.method && `<p><strong>الملاحظة/الإجراء:</strong> ${esc(x.method)}</p>`,
+      x.comparison && `<p><strong>المقارنة:</strong> ${esc(x.comparison)}</p>`,
+      x.conditions && `<p><strong>الظروف:</strong> ${esc(x.conditions)}</p>`,
+      x.limits && `<p><strong>القيود:</strong> ${esc(x.limits)}</p>`
+    ].filter(Boolean).join("");
+    const location = [x.country, x.region].filter(Boolean).join(" / ");
+    return `<article class="record" data-rid="${esc(x.id)}">
+      <h3>${esc(x.title)}</h3>
+      <div class="meta">${esc(x.topic)}${location ? " · " + esc(location) : ""}${x.date ? " · " + esc(x.date) : ""} · الحالة: ${esc(x.status)}</div>
+      ${resultHtml(x)}
+      ${parts}
+      <div class="meta">التكرارات المستقلة: ${x.reps ?? "غير محدد"}</div>
+      <div class="actions">
+        <button class="secondary small" type="button" data-edit="${esc(x.id)}">تعديل</button>
+        <button class="danger small" type="button" data-del="${esc(x.id)}">حذف</button>
+      </div>
+    </article>`;
+  }
+
+  function render() {
+    $("count").textContent = records.length;
+    $("measured").textContent = records.filter(x => x.valueA !== null && x.valueB !== null).length;
+    $("regions").textContent = new Set(records.map(x => x.region).filter(Boolean)).size;
+
+    const term = $("search").value.trim().toLocaleLowerCase("ar");
+    const shown = records.filter(x => !term || SEARCH_FIELDS.some(k => String(x[k] ?? "").toLocaleLowerCase("ar").includes(term)));
+    $("searchCount").textContent = term ? `${shown.length} من ${records.length} سجل` : "";
+
+    if (!records.length) {
+      $("records").innerHTML = `<div class="empty">لا توجد سجلات بعد. ابدأ بإضافة ملاحظة ميدانية.</div>`;
+    } else if (!shown.length) {
+      $("records").innerHTML = `<div class="empty">لا توجد نتائج مطابقة.</div>`;
+    } else {
+      $("records").innerHTML = shown.map(recordHtml).join("");
+    }
+
+    if (lastSavedId) {
+      const el = document.querySelector(`[data-rid="${CSS.escape(lastSavedId)}"]`);
+      if (el) {
+        el.scrollIntoView({ behavior: "smooth", block: "center" });
+        el.classList.add("flash");
+        setTimeout(() => el.classList.remove("flash"), 1800);
+      }
+      lastSavedId = null;
+    }
+  }
+
+  $("search").addEventListener("input", render);
+
+  $("records").addEventListener("click", e => {
+    const delId = e.target.closest("[data-del]")?.dataset.del;
+    const editId = e.target.closest("[data-edit]")?.dataset.edit;
+
+    if (delId) {
+      const x = records.find(r => r.id === delId);
+      if (!x || !confirm(`هل تريد حذف السجل "${x.title}"؟`)) return;
+      const backup = records.slice();
+      records = records.filter(r => r.id !== delId);
+      if (editingId === delId) resetForm();
+      if (persist()) { render(); toast("تم الحذف."); }
+      else records = backup;
+      return;
+    }
+
+    if (editId) {
+      const x = records.find(r => r.id === editId);
+      if (!x) return;
+      editingId = editId;
+      fillForm(x);
+      $("formHeading").textContent = "تعديل سجل محفوظ";
+      $("submitBtn").textContent = "حفظ التعديلات";
+      $("cancelEdit").hidden = false;
+      $("formPanel").scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  });
+
+  $("deleteAll").addEventListener("click", () => {
+    if (!records.length) return;
+    if (!confirm("سيتم حذف جميع السجلات من هذا المتصفح. هل صدّرت نسخة احتياطية؟ متابعة؟")) return;
+    const backup = records.slice();
+    records = [];
+    resetForm();
+    if (persist()) { render(); toast("تم حذف جميع السجلات."); }
+    else records = backup;
+  });
+
+  function download(name, content, type) {
+    const blob = new Blob([content], { type });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = name;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 1500);
+  }
+
+  $("exportJson").addEventListener("click", () => {
+    const payload = { app: "Athar", version: APP_VERSION, exportedAt: nowIso(), records };
+    download(`athar-${todayStr()}.json`, JSON.stringify(payload, null, 2), "application/json;charset=utf-8");
+  });
+
+  $("exportCsv").addEventListener("click", () => {
+    const cols = [...TEXT_FIELDS, "valueA", "valueB", "reps", "createdAt", "updatedAt"];
+    const q = (k, v) => {
+      let s = String(v ?? "");
+      if (/^[=+\-@\t\r]/.test(s)) s = "'" + s;
+      if (k === "date" && /^\d{4}-\d{2}-\d{2}$/.test(s)) s = "'" + s;
+      return '"' + s.replace(/"/g, '""') + '"';
+    };
+    const rows = [cols.join(","), ...records.map(r => cols.map(k => q(k, r[k])).join(","))];
+    download(`athar-${todayStr()}.csv`, "\uFEFF" + rows.join("\r\n"), "text/csv;charset=utf-8");
+  });
+
+  $("exportMd").addEventListener("click", () => {
+    const t = v => String(v ?? "").replace(/[\r\n]+/g, " ").trim() || "—";
+    const md = records.map(x => {
+      const c = changes(x.valueA, x.valueB);
+      const pctA = c && c.aVsB !== null ? fmtPct(c.aVsB) : "غير قابل للحساب";
+      const pctB = c && c.bVsA !== null ? fmtPct(c.bVsA) : "غير قابل للحساب";
+      const valA = x.valueA === null ? "غير متاح" : fmt(x.valueA);
+      const valB = x.valueB === null ? "غير متاح" : fmt(x.valueB);
+      return [
+        `## ${t(x.title)}`,
+        `- المجال: ${t(x.topic)}`,
+        `- البلد / المنطقة: ${t(x.country)} / ${t(x.region)}`,
+        `- التاريخ: ${t(x.date)}`,
+        `- حالة المراجعة: ${t(x.status)}`,
+        `- القياس: A=${valA}، B=${valB} ${t(x.unit)}`,
+        `- تغير A بالنسبة إلى B: ${pctA}`,
+        `- تغير B بالنسبة إلى A: ${pctB}`,
+        `- السؤال: ${t(x.question)}`,
+        `- الملاحظة: ${t(x.method)}`,
+        `- المقارنة: ${t(x.comparison)}`,
+        `- الظروف: ${t(x.conditions)}`,
+        `- القيود: ${t(x.limits)}`,
+        `- التكرارات المستقلة: ${x.reps ?? "غير محدد"}`
+      ].join("\n");
+    }).join("\n\n---\n\n");
+    download(`athar-${todayStr()}.md`, md, "text/markdown;charset=utf-8");
+  });
+
+  $("importBtn").addEventListener("click", () => $("importFile").click());
+
+  function dedupeIncoming(list) {
+    const seen = new Set();
+    return list.map(x => {
+      let id = x.id;
+      for (let i = 0; seen.has(id); i++) {
+        if (i >= MAX_ID_ATTEMPTS) throw new Error("ID generation exhausted");
+        id = makeId();
+      }
+      seen.add(id);
+      return id === x.id ? x : { ...x, id };
+    });
+  }
+
+  const contentKey = x => JSON.stringify({ ...x, id: undefined, createdAt: undefined, updatedAt: undefined });
+
+  function askImportChoice(text, { showMerge, showReplace }) {
+    const dlg = $("importDialog");
+    if (typeof dlg.showModal !== "function") {
+      if (showMerge && confirm(text + "\n\nموافق = دمج الجديد فقط\nإلغاء = الانتقال إلى خيار الاستبدال")) return Promise.resolve("merge");
+      if (showReplace && confirm("استبدال كامل للسجلات الحالية بسجلات الملف؟")) return Promise.resolve("replace");
+      return Promise.resolve("cancel");
+    }
+    return new Promise(resolve => {
+      $("importMsg").textContent = text;
+      $("importMerge").hidden = !showMerge;
+      $("importReplace").hidden = !showReplace;
+      dlg.returnValue = "";
+      dlg.onclose = () => resolve(dlg.returnValue || "cancel");
+      dlg.showModal();
+    });
+  }
+
+  $("importFile").addEventListener("change", async e => {
+    const file = e.target.files?.[0];
+    e.target.value = "";
+    if (!file) return;
+
+    if (file.size === 0) {
+      alert("الملف فارغ. اختر ملف نسخة احتياطية صادرة من أثر.");
+      return;
+    }
+    if (file.size > MAX_IMPORT_BYTES) {
+      alert("الملف أكبر من المتوقع (الحد 5 ميغابايت). تأكد أنه ملف نسخة احتياطية من أثر.");
+      return;
+    }
+
+    let incoming;
+    try {
+      const parsed = JSON.parse(await file.text());
+      incoming = Array.isArray(parsed) ? parsed : parsed?.records;
+      if (!Array.isArray(incoming)) throw new Error("bad format");
+    } catch {
+      alert("تعذر قراءة الملف. تأكد من أنه ملف JSON صادر من أثر.");
+      return;
+    }
+
+    const valid = [];
+    let invalid = 0;
+    for (const raw of incoming) {
+      if (!raw || typeof raw !== "object" || Array.isArray(raw)) { invalid++; continue; }
+      const x = normalize(raw);
+      if (!x.title) { invalid++; continue; }
+      valid.push(x);
+    }
+    if (!valid.length) {
+      alert(`لم يُعثر على سجلات صالحة في الملف. غير الصالح: ${invalid}.`);
+      return;
+    }
+
+    let deduped;
+    try {
+      deduped = dedupeIncoming(valid);
+    } catch {
+      alert("تعذر معالجة معرّفات الملف. أعد المحاولة أو تحقق من الملف.");
+      return;
+    }
+
+    const localById = new Map(records.map(r => [r.id, r]));
+    const incomingIds = new Set(deduped.map(r => r.id));
+    const newOnes = deduped.filter(x => !localById.has(x.id));
+    const duplicates = deduped.length - newOnes.length;
+    const localOnly = records.filter(r => !incomingIds.has(r.id)).length;
+    const overwritten = deduped.filter(x => {
+      const local = localById.get(x.id);
+      return local && contentKey(local) !== contentKey(x);
+    }).length;
+
+    if (newOnes.length === 0 && localOnly === 0 && overwritten === 0) {
+      toast("سجلاتك مطابقة تماماً للملف، لا شيء للاسترجاع.");
+      return;
+    }
+
+    const showMerge = newOnes.length > 0;
+    const lines = [
+      `الملف يحتوي ${deduped.length} سجلاً${invalid ? `، وتجاهلنا ${invalid} غير صالح` : ""}.`,
+      `جديد: ${newOnes.length} · موجود محلياً: ${duplicates}`,
+      ""
+    ];
+    if (showMerge) lines.push("الدمج: يضيف الجديد فقط، ويبقى كل ما هو محلي كما هو.");
+    lines.push(`الاستبدال: يُحذف ${localOnly} سجلاً محلياً غير موجود في الملف، ويُكتب فوق محتوى ${overwritten} سجلاً موجوداً بنسخة الملف.`);
+
+    const choice = await askImportChoice(lines.join("\n"), { showMerge, showReplace: true });
+
+    if (choice === "merge") mergeNew(newOnes);
+    else if (choice === "replace") replaceAll(deduped);
+  });
+
+  function mergeNew(newOnes) {
+    if (!newOnes.length) return;
+    const backup = records;
+    records = [...newOnes, ...records];
+    if (persist()) { render(); toast(`تمت إضافة ${newOnes.length} سجل.`); }
+    else records = backup;
+  }
+
+  function replaceAll(list) {
+    const backup = records;
+    records = list;
+    if (editingId) resetForm();
+    if (persist()) { render(); toast(`تم استرجاع ${list.length} سجل.`); }
+    else records = backup;
+  }
+
+  let deferredPrompt = null;
+  window.addEventListener("beforeinstallprompt", e => {
+    e.preventDefault();
+    deferredPrompt = e;
+    $("installBtn").hidden = false;
+  });
+  $("installBtn").addEventListener("click", async () => {
+    if (!deferredPrompt) return;
+    deferredPrompt.prompt();
+    const { outcome } = await deferredPrompt.userChoice;
+    if (outcome === "accepted") {
+      deferredPrompt = null;
+      $("installBtn").hidden = true;
+    }
+  });
+  window.addEventListener("appinstalled", () => {
+    deferredPrompt = null;
+    $("installBtn").hidden = true;
+    toast("تم تثبيت أثر على جهازك.");
+  });
+
+  const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
+  const isStandalone = window.matchMedia?.("(display-mode: standalone)").matches || navigator.standalone;
+  if (isIOS && !isStandalone) $("iosHint").hidden = false;
+
+  if ("serviceWorker" in navigator) {
+    window.addEventListener("load", () => {
+      navigator.serviceWorker.register("sw.js").catch(err => console.warn("[SW] فشل التسجيل:", err));
+    });
+  }
+  if (navigator.storage?.persist) {
+    navigator.storage.persist()
+      .then(granted => console.info("[storage] تخزين دائم:", granted))
+      .catch(err => console.warn("[storage]", err));
+  }
+
+  loadRecords();
+  resetForm();
+  render();
+})();
+</script>
+</body>
+</html>
