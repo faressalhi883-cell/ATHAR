@@ -1,0 +1,19 @@
+{
+  "id": "./",
+  "name": "أثر | دفتر الأدلة الميدانية",
+  "short_name": "أثر",
+  "description": "دفتر مفتوح لتوثيق الملاحظات والتجارب الميدانية، يعمل دون إنترنت.",
+  "lang": "ar",
+  "dir": "rtl",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f4f6f2",
+  "theme_color": "#17634c",
+  "icons": [
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" },
+    { "src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "maskable" }
+  ]
+}
